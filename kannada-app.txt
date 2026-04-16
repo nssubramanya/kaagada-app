@@ -1,0 +1,73 @@
+kannada-app/
+├── client/                          # Vite + React frontend
+│   ├── public/
+│   │   └── assets/
+│   │       ├── character/           # mascot sprites/SVGs
+│   │       └── audio/               # Kannada pronunciation clips
+│   ├── src/
+│   │   ├── main.jsx
+│   │   ├── App.jsx
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   ├── ProgressBar.jsx
+│   │   │   │   ├── XPBadge.jsx
+│   │   │   │   └── ThoughtBubble.jsx      # mascot's speech bubble
+│   │   │   ├── character/
+│   │   │   │   ├── Mascot.jsx             # animated character
+│   │   │   │   └── IntroSequence.jsx      # onboarding walkthrough
+│   │   │   └── lesson/
+│   │   │       ├── QuizCard.jsx
+│   │   │       ├── FlashCard.jsx
+│   │   │       ├── ListenAndPick.jsx
+│   │   │       └── ResultScreen.jsx
+│   │   ├── pages/
+│   │   │   ├── SplashPage.jsx             # animated entry
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── SignupPage.jsx
+│   │   │   ├── IntroPage.jsx              # mascot intro + app walkthrough
+│   │   │   ├── PathSelectPage.jsx         # choose: phrases OR alphabets
+│   │   │   ├── ProgressMapPage.jsx        # level map per path
+│   │   │   └── LessonPage.jsx             # gamified lesson runner
+│   │   ├── store/                         # Zustand or Redux
+│   │   │   ├── authStore.js
+│   │   │   ├── progressStore.js
+│   │   │   └── lessonStore.js
+│   │   ├── hooks/
+│   │   │   ├── useAuth.js
+│   │   │   └── useLesson.js
+│   │   ├── services/
+│   │   │   └── api.js                     # Axios instance + all API calls
+│   │   ├── utils/
+│   │   │   └── xp.js                      # XP/streak calculation helpers
+│   │   └── styles/
+│   │       └── index.css
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+│
+├── server/                          # Express + Node backend
+│   ├── src/
+│   │   ├── index.js                       # entry, Express setup
+│   │   ├── config/
+│   │   │   └── db.js                      # Mongoose connection
+│   │   ├── models/
+│   │   │   ├── User.js                    # name, email, password hash, streak
+│   │   │   ├── Progress.js                # userId, path, levelsComplete, xp
+│   │   │   └── Lesson.js                  # lessonId, path, type, content[]
+│   │   ├── routes/
+│   │   │   ├── auth.routes.js             # POST /register, /login, /refresh
+│   │   │   ├── progress.routes.js         # GET/POST /progress
+│   │   │   └── lesson.routes.js           # GET /lessons/:path/:level
+│   │   ├── controllers/
+│   │   │   ├── auth.controller.js
+│   │   │   ├── progress.controller.js
+│   │   │   └── lesson.controller.js
+│   │   └── middleware/
+│   │       ├── auth.middleware.js          # JWT verify
+│   │       └── errorHandler.js
+│   ├── .env
+│   └── package.json
+│
+├── .gitignore
+└── README.md
