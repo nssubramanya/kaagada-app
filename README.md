@@ -79,6 +79,45 @@ vercel env add JWT_SECRET
 # Set a secure JWT secret
 ```
 
+## 🤖 CI/CD with GitHub Actions
+
+This project includes automated deployment using GitHub Actions. The CI/CD pipeline automatically builds and deploys your app to Vercel when you push to the main branch.
+
+### Setup GitHub Actions
+
+1. **Go to your GitHub repository**
+2. **Navigate to Settings → Secrets and variables → Actions**
+3. **Add the following secrets**:
+
+   ```bash
+   VERCEL_TOKEN     # Your Vercel token (get from https://vercel.com/account/tokens)
+   VERCEL_ORG_ID    # Your Vercel organization ID
+   VERCEL_PROJECT_ID # Your Vercel project ID
+   ```
+
+4. **Push to main branch** - deployment will happen automatically!
+
+### How It Works
+
+- **Push to main/master**: Production deployment to `https://kaagada-app.vercel.app`
+- **Pull Request**: Preview deployment with unique URL for testing
+- **Build Process**: Installs dependencies, builds frontend, deploys to Vercel
+
+### Manual Deployment
+
+You can also deploy manually using the Vercel CLI:
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Login
+vercel login
+
+# Deploy
+vercel --prod
+```
+
 ## 📁 Project Structure
 
 ```
