@@ -33,7 +33,7 @@ jobs:
         run: npm install --prefix frontend
 
       - name: Install Vercel CLI
-        run: npm install -g vercel
+        run: npm install -g vercel@latest
 
       - name: Build frontend
         run: npm run build
