@@ -11,41 +11,26 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the React app build directory
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-}
-
 // API Routes (stubs for now)
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/progress", require("./routes/progress"));
 app.use("/api/question", require("./routes/question"));
 app.use("/api/user", require("./routes/user"));
 
-// Development root route
-if (process.env.NODE_ENV !== "production") {
-  app.get("/", (req, res) => {
-    res.json({
-      message: "Kaagada API Server is running!",
-      environment: process.env.NODE_ENV || "development",
-      port: PORT,
-      endpoints: {
-        auth: "/api/auth",
-        progress: "/api/progress",
-        questions: "/api/question",
-        users: "/api/user",
-      },
-      frontend: 'Run "npm run dev" in frontend directory for React app',
-    });
+// Root route response
+app.get("/", (req, res) => {
+  res.json({
+    message: "Kaagada API Server is running!",
+    environment: process.env.NODE_ENV || "development",
+    port: PORT,
+    endpoints: {
+      auth: "/api/auth",
+      progress: "/api/progress",
+      questions: "/api/question",
+      users: "/api/user",
+    },
   });
-}
-
-// Catch all handler: send back React's index.html file for client-side routing
-if (process.env.NODE_ENV === "production") {
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-  });
-}
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
