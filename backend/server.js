@@ -38,9 +38,12 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-});
-
 module.exports = app;
+
+// Start server only if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+  });
+}
