@@ -506,4 +506,157 @@ kaagada-app/
 
 ---
 
+## Phase 7: Post-Deployment Fixes & Iterations
+
+### Issue 1: Manual Workflow Trigger Missing
+
+**Problem**: No way to manually trigger deployment without creating new commits
+**Solution**: Added `workflow_dispatch:` event to both workflows
+**Files**: `.github/workflows/deploy.yml`, `.github/workflows/preview.yml`
+
+### Issue 2: GitHub Actions Dependency Cache Error
+
+**Error**: `Dependencies lock file is not found in /home/runner/work/kaagada-app/...`
+**Root Cause**: Monorepo structure with root `package-lock.json` not being resolved
+**Solution**:
+
+- Added `cache-dependency-path: package-lock.json` to workflow
+- Split dependency install into root + frontend steps
+- Added explicit `npm install --prefix frontend`
+
+### Issue 3: Node Version Incompatibility with Vite
+
+**Error**: `Vite requires Node.js version 20.19+ or 22.12+`
+**Solution**: Updated workflows to use `node-version: "22"`
+**Files**: `.github/workflows/deploy.yml`, `.github/workflows/preview.yml`
+
+### Issue 4: Outdated Vercel CLI Version
+
+**Error**: `Your Vercel CLI version is outdated. This endpoint requires version 47.2.2 or later`
+**Solution**:
+
+- Changed `npm install -g vercel` to `npm install -g vercel@latest`
+- Replaced third-party `amondnet/vercel-action@v25` with direct CLI commands
+- Updated preview workflow to use same CLI approach as production
+
+### Issue 5: Root package-lock.json Not Tracked
+
+**Problem**: Removed from `.gitignore` but need to track it for CI/CD
+**Solution**:
+
+- Removed `package-lock.json` from root `.gitignore`
+- Added and committed root `package-lock.json` to repository
+- Ensures consistent dependency resolution in CI/CD
+
+### Issue 6: Deploy Successful but Application 404 Error
+
+**Error**: `404: NOT_FOUND` on deployed app
+**Root Cause**: Vercel routing configured to serve static files directly, but React SPA needs fallback to index.html
+**Solution (First Attempt)**:
+
+- Simplified `vercel.json` to route all requests through Express
+- Removed static build configuration
+- Let Express handle SPA routing with catch-all handler
+
+### Issue 7: Serverless Function Crash (FUNCTION_INVOCATION_FAILED)
+
+**Error**: `500: INTERNAL_SERVER_ERROR`, `Code: FUNCTION_INVOCATION_FAILED`
+**Root Cause**: Express trying to serve static files from paths that don't exist in Vercel's serverless environment
+**Solution (Final)**:
+
+- Updated `vercel.json` to use `buildCommand` and `outputDirectory`
+- Removed Express static file serving
+- Simplified `backend/server.js` to handle only API routes
+- Vercel handles frontend static files independently
+- Files Changed: `vercel.json`, `backend/server.js`
+
+**Key Changes to Files:**
+
+```json
+// vercel.json - Final Configuration
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist"
+}
+```
+
+```javascript
+// backend/server.js - Simplified
+// - Removed path imports and static file serving
+// - Removed conditional production/development logic
+// - Only handles API routes and root response
+// - No catch-all handler (Vercel handles SPA routing)
+```
+
+---
+
+## GitHub Actions Workflow Enhancements
+
+### deploy.yml - Final Configuration
+
+```yaml
+- Node version: 22 (supports latest Vite)
+- Cache: Uses root package-lock.json
+- Install: Separate root + frontend dependencies
+- CLI: Uses vercel@latest
+- Manual Trigger: Added workflow_dispatch event
+```
+
+### preview.yml - Final Configuration
+
+```yaml
+- Node version: 22
+- Cache: Uses root package-lock.json
+- Install: Separate root + frontend dependencies
+- Deploy: Direct Vercel CLI commands (not third-party action)
+- Manual Trigger: Added workflow_dispatch event
+```
+
+---
+
+## Deployment Architecture (Final)
+
+```
+GitHub Actions (CI/CD)
+    ↓
+Vercel Build
+    ├─→ frontend/dist (static files) - served automatically
+    └─→ backend functions - Express API handler
+    ↓
+Vercel Deployment
+    ├─→ Frontend: https://kaagada-app.vercel.app (SPA)
+    └─→ API: https://kaagada-app.vercel.app/api/* (Express routes)
+```
+
+---
+
+## Current Status (Updated)
+
+✅ **Completed:**
+
+- Git repository with proper .gitignore
+- Working Express API server
+- GitHub Actions CI/CD with manual trigger
+- Successful Vercel deployment
+- Frontend React app loading without 404 errors
+- Both production and preview deployments working
+- Root package-lock.json tracked for consistency
+
+🔄 **In Progress:**
+
+- Testing deployed application functionality
+- Verifying API endpoints on production
+
+⏳ **TODO:**
+
+- Implement real backend authentication
+- Add MongoDB database integration
+- Create alphabet learning game
+- Fix navigation back button behavior
+- Add audio pronunciation support
+- Wire Zustand store for global state
+
+---
+
 _This document serves as a comprehensive reference for the Kaagada app development process. Last updated: April 17, 2026_
